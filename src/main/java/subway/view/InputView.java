@@ -11,14 +11,14 @@ public class InputView {
         System.out.println(INPUT_FUNCTION_SELECTION);
         return scanner.nextLine();
     }
-    
+
     public String readSrcStation(Scanner scanner) {
         System.out.println(INPUT_SRC_STATION_MESSAGE);
         return scanner.nextLine();
     }
 
     public String readDstStation(Scanner scanner) {
-        System.out.println(INPUT_SRC_STATION_MESSAGE);
+        System.out.println(INPUT_DST_STATION_MESSAGE);
         return scanner.nextLine();
     }
 }
