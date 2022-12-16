@@ -24,7 +24,9 @@ public class MainController {
     }
 
     private void initRoutine() {
-
+        mainService.initLineInformation();
+        mainService.initStationInformation();
+        mainService.initDijkstraGraph();
     }
     private void mainRoutine() {
         String mainFunction = mainService.askMainFunction(scanner);
