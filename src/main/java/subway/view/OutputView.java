@@ -19,11 +19,12 @@ public class OutputView {
     public void printResult(List<String> path, int distance, int time) {
         System.out.println("\n## 조회 결과");
         System.out.println("[INFO] ---");
-        System.out.println("[INFO] 총 거리: " + distance);
-        System.out.println("[INFO] 총 소요 시간: " + time);
+        System.out.println("[INFO] 총 거리: " + distance + "km");
+        System.out.println("[INFO] 총 소요 시간: " + time + "분");
         System.out.println("[INFO] ---");
         for (String station : path) {
             System.out.println("[INFO] " + station);
         }
+        System.out.println();
     }
 }

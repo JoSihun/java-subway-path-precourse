@@ -3,23 +3,19 @@ package subway.service;
 import org.jgrapht.alg.shortestpath.DijkstraShortestPath;
 import org.jgrapht.graph.DefaultWeightedEdge;
 import org.jgrapht.graph.WeightedMultigraph;
-import subway.domain.Line;
-import subway.domain.LineRepository;
-import subway.domain.Station;
-import subway.domain.StationRepository;
+import subway.domain.*;
 import subway.view.InputView;
 import subway.view.OutputView;
 import subway.view.Validator;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Scanner;
 
 public class MainService {
     private static final Validator validator = new Validator();
     private static final InputView inputView = new InputView();
     private static final OutputView outputView = new OutputView();
+    private static final PathService pathService = new PathService();
     private static final WeightedMultigraph<String, DefaultWeightedEdge> graph = new WeightedMultigraph(DefaultWeightedEdge.class);
     private static final DijkstraShortestPath dijkstraShortestPath = new DijkstraShortestPath(graph);
 
@@ -30,25 +26,22 @@ public class MainService {
     }
 
     public void setEdgeWeightByDistance() {
-        graph.setEdgeWeight(graph.addEdge("교대역", "강남역"), 2);
-        graph.setEdgeWeight(graph.addEdge("강남역", "역삼역"), 2);
-        graph.setEdgeWeight(graph.addEdge("교대역", "남부터미널역"), 3);
-        graph.setEdgeWeight(graph.addEdge("남부터미널역", "양재역"), 6);
-        graph.setEdgeWeight(graph.addEdge("양재역", "매봉역"), 1);
-        graph.setEdgeWeight(graph.addEdge("강남역", "양재역"), 2);
-        graph.setEdgeWeight(graph.addEdge("양재역", "양재시민의숲역"), 10);
+        for (Path path : PathRepository.paths()) {
+            String srcStation = path.getSrcStation().getName();
+            String dstStation = path.getDstStation().getName();
+            int distance = path.getDist();
+            graph.setEdgeWeight(graph.addEdge(srcStation, dstStation), distance);
+        }
     }
 
     public void setEdgeWeightByTime() {
-        graph.setEdgeWeight(graph.addEdge("교대역", "강남역"), 3);
-        graph.setEdgeWeight(graph.addEdge("강남역", "역삼역"), 3);
-        graph.setEdgeWeight(graph.addEdge("교대역", "남부터미널역"), 2);
-        graph.setEdgeWeight(graph.addEdge("남부터미널역", "양재역"), 5);
-        graph.setEdgeWeight(graph.addEdge("양재역", "매봉역"), 1);
-        graph.setEdgeWeight(graph.addEdge("강남역", "양재역"), 8);
-        graph.setEdgeWeight(graph.addEdge("양재역", "양재시민의숲역"), 3);
+        for (Path path : PathRepository.paths()) {
+            String srcStation = path.getSrcStation().getName();
+            String dstStation = path.getDstStation().getName();
+            int time = path.getTime();
+            graph.setEdgeWeight(graph.addEdge(srcStation, dstStation), time);
+        }
     }
-
 
     public List<String> getDijkstraShortestPath(String srcStation, String dstStation, String standardSelection) {
         if (standardSelection.equals("1")) {
@@ -59,10 +52,25 @@ public class MainService {
         return (List<String>) dijkstraShortestPath.getPath(srcStation, dstStation).getVertexList();
     }
 
+    public int getDistanceShortestPath(List<String> paths) {
+        int distance = 0;
+        for (int index = 0; index < paths.size() - 1; index++) {
+            Station srcStation = new Station(paths.get(index));
+            Station dstStation = new Station(paths.get(index + 1));
+            distance += pathService.getDistanceBetween(srcStation, dstStation);
+        }
+        return distance;
+    }
 
-
-
-
+    public int getTimeShortestPath(List<String> paths) {
+        int time = 0;
+        for (int index = 0; index < paths.size() - 1; index++) {
+            Station srcStation = new Station(paths.get(index));
+            Station dstStation = new Station(paths.get(index + 1));
+            time += pathService.getTimeBetween(srcStation, dstStation);
+        }
+        return time;
+    }
 
     public String askMainFunction(Scanner scanner) {
         outputView.printMainFunctionList();
@@ -91,7 +99,6 @@ public class MainService {
     }
 
 
-
     public String askSrcStaion(Scanner scanner) {
         while (true) {
             try {
@@ -114,5 +121,23 @@ public class MainService {
                 System.out.println(e.getMessage());
             }
         }
+    }
+
+    public List<String> askStations(Scanner scanner) {
+        while (true) {
+            try {
+                String srcStation = askSrcStaion(scanner);
+                String dstStation = askDstStaion(scanner);
+                validator.validateSameStation(srcStation, dstStation);
+                validator.validateConnectedStation(srcStation, dstStation);
+                return List.of(srcStation, dstStation);
+            } catch (IllegalArgumentException e) {
+                System.out.println(e.getMessage());
+            }
+        }
+    }
+
+    public void printResult(List<String> paths, int distance, int time) {
+        outputView.printResult(paths, distance, time);
     }
 }
