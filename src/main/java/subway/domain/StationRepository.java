@@ -23,4 +23,18 @@ public class StationRepository {
     public static void deleteAll() {
         stations.clear();
     }
+
+    // TODO: 기능 구현
+    public static Station getStationByName(String stationName) {
+        for (Station station : stations) {
+            if (station.getName().equals(stationName)) {
+                return station;
+            }
+        }
+        return null;
+    }
+
+    public static boolean contains(String stationName) {
+        return stations.contains(getStationByName(stationName));
+    }
 }

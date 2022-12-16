@@ -23,4 +23,18 @@ public class LineRepository {
     public static void deleteAll() {
         lines.clear();
     }
+
+    // TODO: 기능 구현
+    public static Line getLineByName(String lineName) {
+        for (Line line : lines) {
+            if (line.getName().equals(lineName)) {
+                return line;
+            }
+        }
+        return null;
+    }
+
+    public static boolean contains(String lineName) {
+        return lines.contains(getLineByName(lineName));
+    }
 }
