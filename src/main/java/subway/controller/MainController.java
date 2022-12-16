@@ -19,8 +19,6 @@ public class MainController {
     private static final LineService lineService = new LineService();
     private static final StationService stationService = new StationService();
     private static final PathService pathService = new PathService();
-    private final LineRepository lineRepository = new LineRepository();
-    private static final StationRepository stationRepository = new StationRepository();
 
     public MainController(Scanner scanner) {
         this.scanner = scanner;
@@ -28,12 +26,9 @@ public class MainController {
 
     public void run() {
         initRoutine();
-
         while (!mainService.askMainFunction(scanner).equals("Q")) {
             mainRoutine();
         }
-
-
     }
 
     private void initRoutine() {
